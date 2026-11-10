@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>సాహిత్యం · Sahityam</title>
+  <meta name="description" content="A private shelf of Telugu padyalu I love." />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=clash-grotesk@500,600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Telugu:wght@400;500;600;700&family=Ramaraja&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f6f6f3;
+      --ink: #161615;
+      --muted: #6a6964;
+      --line: #d8d7d1;
+      --card: #fcfcfa;
+      --accent: #7a2e1d;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Satoshi, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::selection { background: var(--ink); color: var(--bg); }
+    a { color: inherit; text-underline-offset: 0.18em; }
+
+    .te { font-family: "Noto Serif Telugu", serif; }
+
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 56px 28px 96px; }
+
+    header.top {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 44px;
+    }
+    .title-te {
+      font-family: "Ramaraja", "Noto Serif Telugu", serif;
+      font-size: clamp(40px, 6vw, 72px);
+      line-height: 0.9;
+      letter-spacing: 0.01em;
+    }
+    .title-en {
+      margin-top: 10px;
+      font-family: "Clash Grotesk", Satoshi, sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .sub { margin-top: 14px; max-width: 34em; color: var(--muted); font-size: 15px; }
+    .home {
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .home:hover { color: var(--ink); text-decoration: underline; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 18px;
+    }
+    .card {
+      position: relative;
+      text-align: left;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 26px 24px 22px;
+      cursor: pointer;
+      font: inherit;
+      color: inherit;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+    .card:hover, .card:focus-visible {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 34px -22px rgba(0,0,0,0.5);
+      border-color: #c3c2bb;
+      outline: none;
+    }
+    .card .k {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .card .first {
+      font-family: "Noto Serif Telugu", serif;
+      font-size: 23px;
+      font-weight: 600;
+      line-height: 1.35;
+      margin: 12px 0 10px;
+      letter-spacing: 0;
+    }
+    .card .src { font-size: 13px; color: var(--muted); }
+    .card .src .te { font-size: 14px; }
+    .card .open {
+      margin-top: 16px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      background: #f3e7e2;
+      border: 1px solid #e3cfc7;
+      border-radius: 999px;
+      padding: 3px 9px;
+    }
+
+    /* ---- modal ---- */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: rgba(22,22,21,0.42);
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.28s ease;
+      overflow-y: auto;
+    }
+    .overlay.on { opacity: 1; pointer-events: auto; }
+    .sheet {
+      min-height: 100%;
+      display: flex;
+      justify-content: center;
+      padding: 56px 20px 80px;
+    }
+    .reader {
+      width: 100%;
+      max-width: 760px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: clamp(28px, 5vw, 64px);
+      transform: translateY(16px) scale(0.985);
+      opacity: 0;
+      transition: transform 0.3s cubic-bezier(.2,.7,.2,1), opacity 0.3s ease;
+    }
+    .overlay.on .reader { transform: none; opacity: 1; }
+
+    .close {
+      position: fixed;
+      top: 20px;
+      right: 22px;
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      color: var(--ink);
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: background 0.18s ease, transform 0.18s ease;
+    }
+    .close:hover { background: var(--ink); color: var(--bg); transform: rotate(90deg); }
+
+    .r-src {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .r-src .te { font-size: 13px; letter-spacing: 0.04em; text-transform: none; }
+    .verse {
+      font-family: "Noto Serif Telugu", serif;
+      font-size: clamp(22px, 3.4vw, 30px);
+      font-weight: 500;
+      line-height: 2.05;
+      letter-spacing: 0;
+      margin: 4px 0 8px;
+    }
+    .verse div { text-wrap: balance; }
+    .translit {
+      font-size: 14px;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.9;
+      margin-top: 18px;
+      border-top: 1px dashed var(--line);
+      padding-top: 18px;
+      display: none;
+    }
+    .translit.on { display: block; }
+    .toggle {
+      margin-top: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 14px;
+      cursor: pointer;
+    }
+    .toggle:hover { color: var(--ink); border-color: #bdbcb5; }
+
+    .sec-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 44px 0 16px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+    }
+    .sec-label .te { font-size: 14px; letter-spacing: 0.02em; text-transform: none; color: var(--ink); margin-right: 8px; }
+
+    .words { list-style: none; display: grid; gap: 2px; }
+    .words li {
+      display: grid;
+      grid-template-columns: minmax(130px, 0.5fr) 1fr;
+      gap: 18px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--line);
+      align-items: baseline;
+    }
+    .words .w {
+      font-family: "Noto Serif Telugu", serif;
+      font-size: 19px;
+      font-weight: 600;
+    }
+    .words .m { color: #3f3e3a; font-size: 15px; }
+    .words .m .te { font-size: 16px; }
+
+    .bhavam { font-size: 17px; line-height: 1.7; color: #2d2c29; }
+    .bhavam .te { font-size: 18px; line-height: 1.95; }
+    .bhavam p + p { margin-top: 14px; }
+
+    .verify-note {
+      margin-top: 36px;
+      font-size: 13px;
+      color: var(--accent);
+      background: #f3e7e2;
+      border: 1px solid #e3cfc7;
+      border-radius: 4px;
+      padding: 12px 16px;
+      line-height: 1.5;
+    }
+
+    footer.foot {
+      margin-top: 72px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    footer.foot a { text-decoration: none; }
+    footer.foot a:hover { color: var(--ink); text-decoration: underline; }
+
+    body.locked { overflow: hidden; }
+
+    @media (max-width: 560px) {
+      .wrap { padding: 40px 20px 72px; }
+      header.top { flex-direction: column; align-items: flex-start; gap: 14px; }
+      .words li { grid-template-columns: 1fr; gap: 2px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .card, .reader, .overlay, .close { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div>
+        <h1 class="title-te te">సాహిత్యం</h1>
+        <p class="title-en">Sahityam · Padyalu I love</p>
+        <p class="sub">A private shelf of Telugu padyalu that have stayed with me — each one opens with its word-by-word meaning and bhāvam.</p>
+      </div>
+      <a class="home" href="/">← anilcse.xyz</a>
+    </header>
+
+    <main class="grid" id="grid" aria-label="Poems"></main>
+
+    <footer class="foot">
+      <span>అనిల్ కుమార్ కమ్మరి · Hyderabad</span>
+      <a href="/">Back to site</a>
+    </footer>
+  </div>
+
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Poem">
+    <button class="close" id="close" aria-label="Close">×</button>
+    <div class="sheet">
+      <article class="reader" id="reader"></article>
+    </div>
+  </div>
+
+  <script>
+    // Each poem: title (Telugu first line), source, lines[], translit[], words[{w,m}], bhavam[], verify
+    const poems = [
+      {
+        id: "atajani-kanche",
+        title: "అటజనిఁ గాంచె భూమిసురుఁడు",
+        source: { work: "మనుచరిత్రము", poet: "అల్లసాని పెద్దన", en: "Manucharitramu · Allasani Peddana · 16th c." },
+        lines: [
+          "అటజనిఁ గాంచె భూమిసురుఁ డంబర చుంబి శిరస్సరజ్ఝరీ",
+          "పటల ముహుర్ముహుర్ లుఠ దభంగ తరంగ మృదంగ నిస్స్వన",
+          "స్ఫుట నటనానుకూల పరిపూర్ణ సుధారస గుంభనార్భటీ",
+          "ఘటిత విలంఘన క్రమముల న్ఘనతాకృతి హేమకూటమున్"
+        ],
+        words: [
+          { w: "అటజని", m: "అటకు వెళ్ళి — going to that place" },
+          { w: "గాంచె", m: "చూచెను — beheld, saw" },
+          { w: "భూమిసురుఁడు", m: "బ్రాహ్మణుడు (భూమిపై దేవుడు) — the brahmin, ‘god on earth’" },
+          { w: "అంబర చుంబి శిరస్", m: "ఆకాశాన్ని ముద్దాడే శిఖరం — a peak that kisses the sky" },
+          { w: "సరజ్ఝరీ పటల", m: "జలపాతాల వరుస — cascading streams (the celestial Ganga)" },
+          { w: "ముహుర్ముహుర్", m: "మాటిమాటికి — again and again" },
+          { w: "లుఠత్ అభంగ తరంగ", m: "విడువక దొర్లే అలలు — unbroken tumbling waves" },
+          { w: "మృదంగ నిస్స్వన", m: "మృదంగ ధ్వని — the sound of a mridanga drum" },
+          { w: "స్ఫుట నటన అనుకూల", m: "స్పష్టమైన నాట్యానికి తగిన — fit to accompany vivid dance" },
+          { w: "పరిపూర్ణ సుధారస గుంభన", m: "నిండైన అమృతరస సమ్మేళనం — a full nectar-sweet blend" },
+          { w: "ఆర్భటీ", m: "గంభీర గర్జన — a deep, thunderous roar" },
+          { w: "హేమకూటమున్", m: "హేమకూట పర్వతాన్ని — the golden Hemakuta mountain" }
+        ],
+        bhavam: [
+          "ఆ ప్రయాణంలో బ్రాహ్మణుడు (ప్రవరాఖ్యుడు) హేమకూట పర్వతాన్ని చూశాడు — ఆకాశాన్ని తాకే శిఖరాలు, వాటిపై నుండి జాలువారే దివ్యగంగా ధారలు, మాటిమాటికి దొర్లే అలలు మృదంగ నాదంలా మోగుతూ, నాట్యానికి తగిన, అమృతం వంటి మధురమైన గంభీర గర్జనతో నిండిన ఆ కొండను.",
+          "A single, breathless sentence that paints the Himalayan Hemakuta: sky-high peaks, cascading Ganga streams whose ever-tumbling waves beat like mridanga drums — a sound perfect for dance, rich and nectar-sweet. Peddana is famous for the rolling ‘ṭa’ alliteration that makes the verse itself sound like falling water."
+        ],
+        verify: true
+      },
+      {
+        id: "aarambhimparu",
+        title: "ప్రారంభింపరు నీచమానవులు",
+        source: { work: "నీతిశతకము (భర్తృహరి)", poet: "తెనుఁగు: ఏనుగు లక్ష్మణకవి", en: "Niti Shatakam (Bhartruhari) · Telugu: Enugula Lakshmana Kavi" },
+        lines: [
+          "ప్రారంభింపరు నీచమానవులు విఘ్నత్రస్తులై యల్పులై",
+          "యారంభించి పరిత్యజింతురు విఘ్నాయత్తులై మధ్యముల్",
+          "ధీరుల్ విఘ్ననిహన్యమానులగుచున్ ధృత్యున్నతోత్సాహులై",
+          "ప్రారబ్ధార్థము లుజ్జగింపరు సుమీ ప్రజ్ఞానిధుల్ గావునన్"
+        ],
+        words: [
+          { w: "ప్రారంభింపరు", m: "మొదలే పెట్టరు — do not even begin" },
+          { w: "నీచమానవులు", m: "నీచులైన మనుషులు — base, lowly people" },
+          { w: "విఘ్నత్రస్తులై", m: "ఆటంకాలకు భయపడి — frightened by obstacles" },
+          { w: "అల్పులై", m: "అల్పబుద్ధులై — being petty-minded" },
+          { w: "ఆరంభించి పరిత్యజింతురు", m: "మొదలుపెట్టి వదిలేస్తారు — begin, then abandon it" },
+          { w: "విఘ్నాయత్తులై", m: "ఆటంకాలకు లొంగి — overpowered by obstacles" },
+          { w: "మధ్యముల్", m: "మధ్యస్థులు (సామాన్యులు) — the mediocre" },
+          { w: "ధీరుల్", m: "ధైర్యవంతులు / జ్ఞానులు — the resolute and wise" },
+          { w: "విఘ్ననిహన్యమానులగుచున్", m: "ఆటంకాలతో మాటిమాటికి దెబ్బతింటూ — though struck by obstacle after obstacle" },
+          { w: "ధృత్యున్నతోత్సాహులై", m: "స్థిరమైన, ఉన్నతమైన ఉత్సాహంతో — with steadfast, rising zeal" },
+          { w: "ప్రారబ్ధార్థముల్", m: "చేపట్టిన పనులను — the tasks they have taken up" },
+          { w: "ఉజ్జగింపరు", m: "విడిచిపెట్టరు — never give up" },
+          { w: "సుమీ", m: "సుమా! (నొక్కి చెప్పే పదం) — mind you! (emphatic)" },
+          { w: "ప్రజ్ఞానిధుల్ గావునన్", m: "ప్రజ్ఞకు నిధులు కావున — because they are treasuries of wisdom" }
+        ],
+        bhavam: [
+          "నీచులు ఆటంకాలకు భయపడి ఏ పనీ మొదలే పెట్టరు. సామాన్యులు మొదలుపెట్టినా, ఆటంకాలు రాగానే మధ్యలో వదిలేస్తారు. కానీ ధీరులు మాత్రం ఆటంకాలు ఎన్ని వచ్చినా, పదే పదే దెబ్బతిన్నా, స్థిరమైన ఉత్సాహంతో చేపట్టిన పనిని ఎప్పటికీ విడిచిపెట్టరు — వారు ప్రజ్ఞకు నిధులు కావున.",
+          "The low never start, scared off by obstacles. The middling start but quit when obstacles hit. The resolute — battered by setback after setback — hold their zeal and never abandon what they began. That steadfastness is exactly what makes them wise."
+        ],
+        verify: false
+      },
+      {
+        id: "okacho-nelanu",
+        title: "ఒకచో నేలను బవ్వళించు",
+        source: { work: "వైరాగ్యశతకము (భర్తృహరి)", poet: "తెనుఁగు: ఏనుగు లక్ష్మణకవి", en: "Vairagya Shatakam (Bhartruhari) · Telugu: Enugula Lakshmana Kavi" },
+        lines: [
+          "ఒకచో నేలను బవ్వళించు నొకచో నొప్పారు పూసెజ్జపై",
+          "నొకచో శాకము లారగించు నొకచో నుత్కృష్ట శాల్యోదనం",
+          "బొకచో బొంత ధరించు నొకచో ధరించుం దివ్య వస్త్రావళుల్",
+          "సుకృతార్థుల్ మనమొల్లరొల్లరు సుఖంబున్ దుఃఖమున్ దీరులై"
+        ],
+        words: [
+          { w: "ఒకచో", m: "ఒకచోట / ఒకసారి — in one place, at one time" },
+          { w: "నేలను బవ్వళించు", m: "నేలపైనే పడుకుంటాడు — sleeps on the bare ground" },
+          { w: "ఒప్పారు పూసెజ్జపై", m: "అందమైన పూలపాన్పుపై — on a fine bed of flowers" },
+          { w: "శాకములు ఆరగించు", m: "ఆకుకూరలు తింటాడు — eats mere greens" },
+          { w: "ఉత్కృష్ట శాల్యోదనంబు", m: "శ్రేష్ఠమైన బియ్యపు అన్నం — the choicest rice" },
+          { w: "బొంత ధరించు", m: "చినిగిన గుడ్డ కడతాడు — wears a patched rag" },
+          { w: "దివ్య వస్త్రావళుల్", m: "దివ్యమైన వస్త్రాలు — divine, splendid garments" },
+          { w: "సుకృతార్థుల్", m: "సత్కార్యార్థులు (ధీరులు) — those intent on a worthy goal" },
+          { w: "మనమొల్లరు", m: "మనసున లెక్కచేయరు — pay it no heed in their mind" },
+          { w: "దీరులై", m: "ధీరులై — being steadfast" }
+        ],
+        bhavam: [
+          "లక్ష్యంపై నిలిచిన ధీరుడు పరిస్థితిని లెక్కచేయడు — ఒకప్పుడు నేలపైనే నిద్రిస్తాడు, ఒకప్పుడు పూలపాన్పుపై; ఒకప్పుడు ఆకుకూరలు తింటాడు, ఒకప్పుడు మేలిమి అన్నం; ఒకప్పుడు చినిగిన బొంత, ఒకప్పుడు దివ్య వస్త్రాలు. సుఖమైనా దుఃఖమైనా అతని మనసు చలించదు.",
+          "The one fixed on a worthy aim weighs neither comfort nor hardship: now the bare earth, now a bed of flowers; now plain greens, now the finest rice; now a beggar’s rag, now divine robes. Sukha or duḥkha — the steadfast mind simply does not count it. (Bhartruhari’s ‘kvacid-bhūmau śayyā…’.)"
+        ],
+        verify: true
+      },
+      {
+        id: "telivi-yokinta",
+        title: "తెలివి యొకింత లేని యెడల",
+        source: { work: "— (మూలం సరిచూడాలి)", poet: "", en: "Source to confirm" },
+        lines: [
+          "తెలివి యొకింత లేని యెడల …"
+        ],
+        words: [],
+        bhavam: [
+          "ఈ పద్యపు పూర్తి పాఠ్యం కోసం ఎదురుచూస్తున్నాను — నీవు అసలు పద్యాన్ని అందిస్తే పద విభజన, భావంతో పూర్తి చేస్తాను."
+        ],
+        pending: true,
+        verify: true
+      },
+      {
+        id: "sarasapu-dharmamu",
+        title: "సరసపు ధర్మమున్ విమల సత్యము",
+        source: { work: "— (మూలం సరిచూడాలి)", poet: "", en: "Source to confirm" },
+        lines: [
+          "సరసపు ధర్మమున్ విమల సత్యము …"
+        ],
+        words: [],
+        bhavam: [
+          "ఈ పద్యపు పూర్తి పాఠ్యం కోసం ఎదురుచూస్తున్నాను — నీవు అసలు పద్యాన్ని అందిస్తే పద విభజన, భావంతో పూర్తి చేస్తాను."
+        ],
+        pending: true,
+        verify: true
+      }
+    ];
+
+    const grid = document.getElementById("grid");
+    const overlay = document.getElementById("overlay");
+    const reader = document.getElementById("reader");
+    const closeBtn = document.getElementById("close");
+    let lastFocus = null;
+
+    poems.forEach((p, i) => {
+      const card = document.createElement("button");
+      card.className = "card";
+      card.type = "button";
+      card.setAttribute("aria-haspopup", "dialog");
+      const badge = p.verify ? `<span class="badge">${p.pending ? "పాఠ్యం కావాలి" : "సరిచూడండి"}</span>` : "";
+      card.innerHTML = `
+        ${badge}
+        <span class="k">${String(i + 1).padStart(2, "0")} · పద్యం</span>
+        <span class="first te">${p.lines[0].replace(/…\s*$/, "")}</span>
+        <span class="src"><span class="te">${p.source.work}</span>${p.source.poet ? " · " + p.source.poet : ""}</span>
+        <span class="open">చదవండి · Read →</span>
+      `;
+      card.addEventListener("click", () => openPoem(p));
+      grid.appendChild(card);
+    });
+
+    function openPoem(p) {
+      const wordRows = p.words.map(x =>
+        `<li><span class="w te">${x.w}</span><span class="m">${x.m}</span></li>`
+      ).join("");
+      const bhavamHtml = p.bhavam.map((b, idx) =>
+        `<p${idx === 0 ? ' class="te"' : ""}>${b}</p>`
+      ).join("");
+      const wordsBlock = p.words.length
+        ? `<p class="sec-label"><span class="te">పద విభజన</span> Word by word</p><ul class="words">${wordRows}</ul>`
+        : "";
+      const bhavamLabel = `<p class="sec-label"><span class="te">భావం</span> Meaning</p>`;
+      const verseLines = p.lines.map(l => `<div>${l}</div>`).join("");
+      const srcLine = `<p class="r-src"><span class="te">${p.source.work}</span>${p.source.poet ? " · " + p.source.poet : ""} &nbsp;—&nbsp; ${p.source.en}</p>`;
+      const note = p.verify
+        ? `<p class="verify-note">${p.pending
+            ? "గమనిక: ఈ పద్యపు పూర్తి పాఠ్యం ఇంకా చేర్చలేదు. అసలు పద్యాన్ని పంపితే పూర్తి చేస్తాను."
+            : "గమనిక: ఈ పాఠ్యం జ్ఞాపకం నుండి రాసినది — ప్రచురించే ముందు ఒకసారి సరిచూడండి."}</p>`
+        : "";
+
+      reader.innerHTML = `
+        ${srcLine}
+        <div class="verse te">${verseLines}</div>
+        ${wordsBlock}
+        ${bhavamLabel}
+        <div class="bhavam">${bhavamHtml}</div>
+        ${note}
+      `;
+      lastFocus = document.activeElement;
+      overlay.classList.add("on");
+      document.body.classList.add("locked");
+      overlay.scrollTop = 0;
+      closeBtn.focus();
+    }
+
+    function closePoem() {
+      overlay.classList.remove("on");
+      document.body.classList.remove("locked");
+      if (lastFocus) lastFocus.focus();
+    }
+
+    closeBtn.addEventListener("click", closePoem);
+    overlay.addEventListener("click", e => { if (e.target === overlay || e.target.classList.contains("sheet")) closePoem(); });
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && overlay.classList.contains("on")) closePoem(); });
+  </script>
+</body>
+</html>
